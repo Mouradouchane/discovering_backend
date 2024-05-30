@@ -1,57 +1,43 @@
 
+// ====================================================
 const express = require("express");
 const mysql   = require("mysql2/promise");
 const env     = require("dotenv").config();
-const path    = require("path");
-
-const bcrypt = require("bcryptjs");
-const uuid   = require("uuid").v4;
 
 const cookie_parser = require("cookie-parser");
+const bcrypt = require("bcryptjs");
+const uuid = require("uuid").v4;
+const jwt = require("jsonwebtoken");
+
 var validator = require('validator');
+// ====================================================
 
-const server = express();
-const port = process.env.port;
+// ====================================================
+const serve_web_pages_router = require("./routes/web_pages");
+const api_router = require("./routes/api");
+// ====================================================
 
+const server  = express();
+const port    = process.env.port || 2024;
 const db_info = JSON.parse(process.env.db_info);
-var mysql_connection = null;
 
-async function try_to_connect_db( ){
-    
-    try{
-        mysql_connection = await mysql.createConnection({
-            host: db_info.host,
-            user: db_info.username,
-            database: db_info.name,
-            port: db_info.port,
-            password: db_info.password,
-        });
-        
-        console.log("connection with database established");
-        return true;
-    }
-    catch(error){
-        console.error("connection with database failed :" , error.code);
-        return false;
-    }
-
-} 
-
-(function main(){
+function main(){
 
     server.use(cookie_parser());
     server.use(express.json()); 
 
+    // serve web pages
+    server.use(serve_web_pages_router);
     
+    // api routes
+    server.use("/api" , api_router);
 
-    // server start listen
-    server.listen(port , async function( ) {
-        
-        // await connection with databse 
-        if(await try_to_connect_db() == false) process.exit(0);
-
+    // server start point
+    server.listen(port , async function( ) {        
         console.log(" ");
-        console.log("[SERVER RUNNING] at port: " , port); 
+        console.log("[SERVER] running at" , process.env.host + ":" + port); 
     });
     
-})();
+} 
+
+main();

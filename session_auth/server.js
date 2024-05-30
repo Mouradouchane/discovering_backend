@@ -401,6 +401,14 @@ server.post("/login" , async function(req , res) {
 
 });
 
+class vec3{
+    constructor(x,y,z){
+        this.x=x;
+        this.y=y;
+        this.z=z;
+    }
+}
+
 server.listen(port , async function( ) {
 
     if(await try_to_connect_db() == false) process.exit(0);
