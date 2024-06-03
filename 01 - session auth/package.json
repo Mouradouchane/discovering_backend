@@ -56,7 +56,9 @@
 
     "@types/cookie-parser": "^1.4.7",
 
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+
+    "typescript": "^5.4.5"
 
   },
 
