@@ -1,10 +1,11 @@
 
-// const express = require("express");
 import Express from "express"; 
 import dotenv  from "dotenv";
-import {views_router} from "./controllers/views_router.js";
 import path from "path";
 import { fileURLToPath } from 'url';
+
+import {views_router} from "./controllers/views_router.js";
+import { api_router } from "./controllers/api_router.js";
 
 /*
 const mysql   = require("mysql2/promise");
@@ -32,10 +33,30 @@ var db_info  = null;
         port = (process.env?.port || port);
         db_info = JSON.parse(process.env?.db_info || null);
         
-        // setup routers
-        console.log(path.dirname(fileURLToPath(import.meta.url)));
+        // set views folders to be public  
+        server.use(
+            "/", Express.static(
+                path.join( path.dirname(fileURLToPath(import.meta.url)) , "views/home") , 
+                { extensions: ['html' , "css" , "js"], index : "home.html" }
+            )
+        );
+        server.use(
+            "/login", Express.static(
+                path.join( path.dirname(fileURLToPath(import.meta.url)) , "views/login") , 
+                { extensions: ['html' , "css" , "js"], index : "login.html" }
+            )
+        );
+        server.use(
+            "/signin", Express.static(
+                path.join( path.dirname(fileURLToPath(import.meta.url)) , "views/signin") , 
+                { extensions: ['html' , "css" , "js"], index : "signin.html" }
+            )
+        );
+
+        // set routers
+        server.use("/api" , api_router);
         server.use("/" , views_router);
-        
+
         // for invalid requests
         server.use(function(req ,res) {
             res.sendStatus(404);
